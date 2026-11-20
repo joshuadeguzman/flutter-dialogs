@@ -1,6 +1,6 @@
 name: flutter_dialogs
 description: Platform-aware dialogs, alerts, confirmations and action sheets. Cupertino on iOS and macOS, Material everywhere else, from one API.
-version: 4.0.0
+version: 4.0.1
 homepage: https://github.com/joshuadeguzman/flutter-dialogs
 repository: https://github.com/joshuadeguzman/flutter-dialogs
 issue_tracker: https://github.com/joshuadeguzman/flutter-dialogs/issues
