@@ -1,3 +1,17 @@
+## [4.0.0] - November 20, 2026
+- Support Dart 3 and current Flutter. The SDK constraint was `<3.0.0`, which blocked every Flutter release since 3.10.
+- Add `showPlatformAlert` and `showPlatformConfirmation`, which close themselves and return the result.
+- Add `showPlatformActionSheet` and `PlatformSheetAction`: a `CupertinoActionSheet` on iOS and a modal bottom sheet on Android.
+- Add `PlatformDialogStyle` and a `style` parameter on every API, to follow the platform or force Material or Cupertino.
+- Add `icon` to `BasicDialogAlert` and `BasicDialogAlertData`.
+- Add `isDefaultAction` and `isDestructiveAction` to `BasicDialogAction`, which now style Material too.
+- Add `barrierDismissible`, `barrierColor`, `barrierLabel`, `routeSettings` and `anchorPoint` to `showPlatformDialog`. `barrierDismissible` works on every platform.
+- Make widgets `const` and accept a `key`.
+- Export `BaseDialog` so you can build your own platform-aware widgets.
+- Deprecate `androidBarrierDismissible`, `iosIsDefaultAction` and `iosIsDestructiveAction`. They still work.
+- Add widget tests for iOS and Android.
+- Rebuild the example app as a demo gallery and refresh the screenshots.
+
 ## [3.0.0] - July 22, 2022
 - Add support for the web and other platforms
 - Fix references to the design language of the native platforms
