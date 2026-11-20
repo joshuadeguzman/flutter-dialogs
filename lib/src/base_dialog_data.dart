@@ -5,18 +5,22 @@
 import 'package:flutter/widgets.dart';
 
 abstract class BaseDialogData {
-  BaseDialogData({
+  const BaseDialogData({
     this.title,
     this.content,
     this.actions,
+    this.icon,
   });
 
-  /// Represents appropriate [Widget] to display in content section.
+  /// The widget shown in the content section.
   final Widget? content;
 
-  /// Represents appropriate [Widget] to display in title section.
+  /// The widget shown in the title section.
   final Widget? title;
 
-  /// Represents appropriate list of [Widget]'s to display in actions section.
+  /// The widgets shown in the actions section.
   final List<Widget>? actions;
+
+  /// The widget shown above the title.
+  final Widget? icon;
 }
