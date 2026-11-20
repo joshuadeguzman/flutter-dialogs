@@ -1,3 +1,6 @@
+## [4.0.1] - November 20, 2026
+- Refresh the README and pub.dev screenshots with fresh iOS simulator and Android emulator captures.
+
 ## [4.0.0] - November 20, 2026
 - Support Dart 3 and current Flutter. The SDK constraint was `<3.0.0`, which blocked every Flutter release since 3.10.
 - Add `showPlatformAlert` and `showPlatformConfirmation`, which close themselves and return the result.
