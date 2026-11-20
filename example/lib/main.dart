@@ -149,10 +149,10 @@ final demos = <Demo>[
     icon: Icons.list,
     run: (context, style) {
       const accounts = [
-        'hi@example.com',
-        'joshua@joshuamdeguzman.com',
-        'joshua@flutter.ph',
-        'team@flutter.ph',
+        'alex@example.com',
+        'sam@example.com',
+        'jordan@example.org',
+        'team@example.org',
       ];
       return showPlatformDialog<String>(
         context: context,

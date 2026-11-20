@@ -4,13 +4,13 @@
 
 Platform-aware dialogs, alerts, confirmations and action sheets for Flutter. Write one call and get Cupertino widgets on iOS and macOS, and Material widgets everywhere else.
 
-![Demo gallery on iOS and Android](.github/screenshots/gallery.png)
+![Demo gallery on iOS and Android](screenshots/gallery.png)
 
 ## Features
 
 - **Platform aware.** Cupertino on iOS and macOS. Material on Android, the web, Windows and Linux.
 - **Simple helpers that return results.** `showPlatformAlert`, `showPlatformConfirmation` and `showPlatformActionSheet` handle the buttons and closing for you.
-- **Native action styles.** Default and destructive actions look right on both platforms.
+- **Native action styles.** Default actions are bold and destructive actions are red on both platforms.
 - **Override when you need to.** Force a style, or change the title and content per platform.
 - **No dependencies.** Only the Flutter SDK.
 
@@ -36,7 +36,7 @@ await showPlatformAlert(
 );
 ```
 
-![Alert on iOS and Android](.github/screenshots/alert.png)
+![Alert on iOS and Android](screenshots/alert.png)
 
 Add an `icon` to show it above the title.
 
@@ -49,7 +49,7 @@ await showPlatformAlert(
 );
 ```
 
-![Alert with an icon on iOS and Android](.github/screenshots/alert_icon.png)
+![Alert with an icon on iOS and Android](screenshots/alert_icon.png)
 
 ## Confirmation
 
@@ -67,11 +67,11 @@ final discard = await showPlatformConfirmation(
 if (discard) deleteDraft();
 ```
 
-![Destructive confirmation on iOS and Android](.github/screenshots/confirmation.png)
+![Destructive confirmation on iOS and Android](screenshots/confirmation.png)
 
 ## Action sheet
 
-`showPlatformActionSheet` shows a `CupertinoActionSheet` on iOS and a modal bottom sheet on Android. It returns the `value` of the option the user picks, or `null` if they cancel.
+`showPlatformActionSheet` shows a `CupertinoActionSheet` on iOS and macOS, and a modal bottom sheet everywhere else. It returns the `value` of the option the user picks, or `null` if they cancel.
 
 ```dart
 final choice = await showPlatformActionSheet<String>(
@@ -87,9 +87,9 @@ final choice = await showPlatformActionSheet<String>(
 );
 ```
 
-Icons are shown on Material only, since iOS action sheets are text only.
+Icons are shown on Material only, since iOS action sheets are text only. The cancel button is Cupertino only. On Material, users close the sheet by swiping down or tapping outside it.
 
-![Action sheet on iOS and Android](.github/screenshots/action_sheet.png)
+![Action sheet on iOS and Android](screenshots/action_sheet.png)
 
 ## Custom dialogs
 
@@ -120,17 +120,17 @@ final answer = await showPlatformDialog<String>(
 );
 ```
 
-![Dialog with three actions on iOS and Android](.github/screenshots/custom_actions.png)
+![Dialog with three actions on iOS and Android](screenshots/custom_actions.png)
 
 The content can be any widget, such as a list.
 
-![Dialog with a list on iOS and Android](.github/screenshots/list_content.png)
+![Dialog with a list on iOS and Android](screenshots/list_content.png)
 
 ### Action styles
 
 | Parameter | Cupertino | Material |
 |---|---|---|
-| `isDefaultAction` | Bold | Bold label |
+| `isDefaultAction` | Bold | Semibold label |
 | `isDestructiveAction` | Red | `ColorScheme.error` |
 
 ### Tap outside to close
@@ -139,7 +139,7 @@ Set `barrierDismissible: true` to let users close the dialog by tapping outside 
 
 ### Per-platform overrides
 
-Use the `android` and `ios` builders to change parts of the dialog on one platform only. Anything you leave out falls back to the shared value.
+Use the `android` and `ios` builders to change parts of the dialog on one platform only. Anything you leave out falls back to the shared value. The builders follow the resolved style, so `ios` is used whenever the dialog renders as Cupertino, even on Android with a forced style.
 
 ```dart
 BasicDialogAlert(
@@ -155,7 +155,7 @@ BasicDialogAlert(
 )
 ```
 
-![Per-platform overrides on iOS and Android](.github/screenshots/overrides.png)
+![Per-platform overrides on iOS and Android](screenshots/overrides.png)
 
 ## Forcing a style
 
@@ -173,9 +173,11 @@ When you build a dialog with `showPlatformDialog`, pass the same `style` to `Bas
 
 The adaptive style reads `Theme.of(context).platform`, so it respects any platform override set on your theme.
 
+Material dialogs need `MaterialLocalizations`. If your app uses `CupertinoApp` and you force `PlatformDialogStyle.material`, add `DefaultMaterialLocalizations.delegate` to its `localizationsDelegates`.
+
 ## Migrating from 3.x
 
-Version 4 needs Dart 3. Your existing code keeps working. A few parameters are deprecated in favor of ones that work on every platform:
+Version 4 needs Dart 3. Your existing code keeps compiling. A few parameters are deprecated in favor of ones that work on every platform:
 
 | Deprecated | Use instead |
 |---|---|
@@ -184,6 +186,8 @@ Version 4 needs Dart 3. Your existing code keeps working. A few parameters are d
 | `iosIsDestructiveAction` | `isDestructiveAction` |
 
 The new parameters also style Material, so a destructive action is now red on Android too.
+
+One behavior changed. In 3.x, an `android` or `ios` override that left out `actions` showed no actions. In 4.0, it falls back to the shared `actions`, like every other field. To hide the actions on one platform, pass `actions: const []` in that override.
 
 ## Example
 

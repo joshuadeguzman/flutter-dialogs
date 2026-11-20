@@ -422,4 +422,90 @@ void main() {
       expect(await future, 'delete');
     });
   });
+
+  group('3.x compatibility', () {
+    testWidgets('androidBarrierDismissible does not make iOS dismissible',
+        (tester) async {
+      final context = await pumpApp(tester, TargetPlatform.iOS);
+      showPlatformDialog<void>(
+        context: context,
+        androidBarrierDismissible: true,
+        builder: (_) => sampleAlert(),
+      );
+      await tester.pumpAndSettle();
+      await tester.tapAt(const Offset(10, 10));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Title'), findsOneWidget);
+    });
+
+    for (final platform in [TargetPlatform.iOS, TargetPlatform.android]) {
+      testWidgets(
+          'an override without actions keeps the shared actions on '
+          '${platform.name}', (tester) async {
+        final context = await pumpApp(tester, platform);
+        showPlatformDialog<void>(
+          context: context,
+          builder: (_) => BasicDialogAlert(
+            title: const Text('Shared'),
+            actions: [
+              BasicDialogAction(title: const Text('OK'), onPressed: () {}),
+            ],
+            android: (_) => const BasicDialogAlertData(title: Text('Android')),
+            ios: (_) => const BasicDialogAlertData(title: Text('iOS')),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('OK'), findsOneWidget);
+      });
+    }
+
+    testWidgets('an override can hide the actions with an empty list',
+        (tester) async {
+      final context = await pumpApp(tester, TargetPlatform.android);
+      showPlatformDialog<void>(
+        context: context,
+        builder: (_) => BasicDialogAlert(
+          title: const Text('Shared'),
+          actions: [
+            BasicDialogAction(title: const Text('OK'), onPressed: () {}),
+          ],
+          android: (_) => const BasicDialogAlertData(actions: []),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('OK'), findsNothing);
+    });
+  });
+
+  group('showPlatformActionSheet with a forced style', () {
+    const actions = [PlatformSheetAction(label: 'Copy link', value: 'copy')];
+
+    testWidgets('cupertino on Android', (tester) async {
+      final context = await pumpApp(tester, TargetPlatform.android);
+      showPlatformActionSheet<String>(
+        context: context,
+        style: PlatformDialogStyle.cupertino,
+        actions: actions,
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CupertinoActionSheet), findsOneWidget);
+    });
+
+    testWidgets('material on iOS', (tester) async {
+      final context = await pumpApp(tester, TargetPlatform.iOS);
+      showPlatformActionSheet<String>(
+        context: context,
+        style: PlatformDialogStyle.material,
+        actions: actions,
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BottomSheet), findsOneWidget);
+      expect(find.text('Cancel'), findsNothing);
+    });
+  });
 }

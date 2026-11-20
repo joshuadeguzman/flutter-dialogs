@@ -13,11 +13,11 @@ topics:
 
 screenshots:
   - description: Alert on iOS and Android.
-    path: .github/screenshots/alert.png
+    path: screenshots/alert.png
   - description: Destructive confirmation on iOS and Android.
-    path: .github/screenshots/confirmation.png
+    path: screenshots/confirmation.png
   - description: Action sheet on iOS and Android.
-    path: .github/screenshots/action_sheet.png
+    path: screenshots/action_sheet.png
 
 environment:
   sdk: ^3.5.0
@@ -28,6 +28,6 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
-  flutter_lints: ^6.0.0
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter

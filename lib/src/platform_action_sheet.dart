@@ -38,8 +38,9 @@ class PlatformSheetAction<T> {
 /// Shows a list of options and returns the [PlatformSheetAction.value] of the
 /// one the user picks.
 ///
-/// Cupertino platforms show a [CupertinoActionSheet] with a cancel button.
-/// Material platforms show a modal bottom sheet.
+/// Cupertino platforms show a [CupertinoActionSheet] with a cancel button
+/// labeled [cancelLabel]. Material platforms show a modal bottom sheet with no
+/// cancel button, so [cancelLabel] is not used there.
 ///
 /// Returns null if the user cancels or dismisses the sheet.
 ///

@@ -50,9 +50,15 @@ class BasicDialogAlert extends BaseDialog<AlertDialog, CupertinoAlertDialog> {
   final Widget? icon;
 
   /// Overrides used only when rendering the Material version.
+  ///
+  /// This follows the resolved [style], not the device. It's used whenever the
+  /// dialog renders as Material, even on iOS with a forced style.
   final BaseDialogBuilder<BasicDialogAlertData>? android;
 
   /// Overrides used only when rendering the Cupertino version.
+  ///
+  /// This follows the resolved [style], not the device. It's used whenever the
+  /// dialog renders as Cupertino, even on Android with a forced style.
   final BaseDialogBuilder<BasicDialogAlertData>? ios;
 
   @override
