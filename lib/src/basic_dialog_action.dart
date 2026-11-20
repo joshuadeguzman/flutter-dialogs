@@ -4,54 +4,78 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dialogs/src/base_action_data.dart';
-import 'package:flutter_dialogs/src/base_dialog.dart';
+
+import 'base_action_data.dart';
+import 'base_dialog.dart';
 
 class BasicDialogActionData extends BaseActionData {
-  BasicDialogActionData({
-    VoidCallback? onPressed,
-    Widget? title,
-  }) : super(onPressed: onPressed, title: title);
+  const BasicDialogActionData({
+    super.onPressed,
+    super.title,
+  });
 }
 
-/// Widget class that holds the possible widgets to be shown in a [BaseDialog].
-/// For example, [TextButton] for Android and [CupertinoDialogAction] for iOS.
+/// A dialog action that renders as a [TextButton] on Material platforms and a
+/// [CupertinoDialogAction] on Cupertino platforms.
 class BasicDialogAction extends BaseDialog<TextButton, CupertinoDialogAction> {
-  BasicDialogAction(
-      {this.onPressed, this.title, this.iosIsDestructiveAction = false, this.iosIsDefaultAction = false});
+  const BasicDialogAction({
+    super.key,
+    super.style,
+    this.onPressed,
+    this.title,
+    this.isDefaultAction = false,
+    this.isDestructiveAction = false,
+    @Deprecated('Use isDestructiveAction, which also styles Material. '
+        'This was deprecated after v3.0.0.')
+    this.iosIsDestructiveAction = false,
+    @Deprecated('Use isDefaultAction, which also styles Material. '
+        'This was deprecated after v3.0.0.')
+    this.iosIsDefaultAction = false,
+  });
 
-  /// Handles the [VoidCallback] whenever an action is pressed.
+  /// Called when this action is pressed.
+  ///
+  /// If null, the action is disabled.
   final VoidCallback? onPressed;
 
-  /// Represents appropriate [Widget] to display in title section.
-  /// For example, this can be a simple [Text] widget
-  /// or a [Container] widget that contains a [Text] widget.
+  /// The label of this action, usually a [Text] widget.
   final Widget? title;
 
-  /// Whether this action destroys an object.
+  /// Whether this is the preferred action in the dialog.
   ///
-  /// For example, an action that deletes an email is destructive.
+  /// Cupertino renders it in bold, like
+  /// [UIAlertController.preferredAction](https://developer.apple.com/documentation/uikit/uialertcontroller/1620102-preferredaction).
+  /// Material renders its label in bold.
+  final bool isDefaultAction;
+
+  /// Whether this action destroys something, such as deleting an email.
   ///
-  /// Defaults to false and cannot be null.
-  /// Only used on iOS
+  /// Cupertino renders it in red. Material renders it with
+  /// [ColorScheme.error].
+  final bool isDestructiveAction;
+
+  /// Whether this action destroys something. Only used on Cupertino.
+  @Deprecated('Use isDestructiveAction, which also styles Material. '
+      'This was deprecated after v3.0.0.')
   final bool iosIsDestructiveAction;
 
-  /// Set to true if button is the default choice in the dialog.
-  ///
-  /// Default buttons have bold text. Similar to
-  /// [UIAlertController.preferredAction](https://developer.apple.com/documentation/uikit/uialertcontroller/1620102-preferredaction),
-  /// but more than one action can have this attribute set to true in the same
-  /// [CupertinoAlertDialog]
-  ///
-  /// This parameters defaults to false and cannot be null.
-  /// Only used on iOS
+  /// Whether this is the preferred action. Only used on Cupertino.
+  @Deprecated('Use isDefaultAction, which also styles Material. '
+      'This was deprecated after v3.0.0.')
   final bool iosIsDefaultAction;
 
   @override
   TextButton buildMaterialWidget(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return TextButton(
       onPressed: onPressed,
-      child: title ?? Container(),
+      style: isDestructiveAction
+          ? TextButton.styleFrom(foregroundColor: colorScheme.error)
+          : null,
+      child: _label(
+        isDefaultAction ? const TextStyle(fontWeight: FontWeight.w600) : null,
+      ),
     );
   }
 
@@ -59,9 +83,17 @@ class BasicDialogAction extends BaseDialog<TextButton, CupertinoDialogAction> {
   CupertinoDialogAction buildCupertinoWidget(BuildContext context) {
     return CupertinoDialogAction(
       onPressed: onPressed,
-      child: title ?? Container(),
-      isDestructiveAction: iosIsDestructiveAction,
-      isDefaultAction: iosIsDefaultAction,
+      // ignore: deprecated_member_use_from_same_package
+      isDestructiveAction: isDestructiveAction || iosIsDestructiveAction,
+      // ignore: deprecated_member_use_from_same_package
+      isDefaultAction: isDefaultAction || iosIsDefaultAction,
+      child: title ?? const SizedBox.shrink(),
     );
+  }
+
+  Widget _label(TextStyle? style) {
+    final child = title ?? const SizedBox.shrink();
+    if (style == null) return child;
+    return DefaultTextStyle.merge(style: style, child: child);
   }
 }

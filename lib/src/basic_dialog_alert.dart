@@ -4,54 +4,69 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dialogs/src/base_dialog.dart';
-import 'package:flutter_dialogs/src/base_dialog_data.dart';
 
+import 'base_dialog.dart';
+import 'base_dialog_data.dart';
+
+/// Platform-specific overrides for a [BasicDialogAlert].
+///
+/// Any value you leave null falls back to the value set on the
+/// [BasicDialogAlert] itself.
 class BasicDialogAlertData extends BaseDialogData {
-  BasicDialogAlertData({
-    Widget? title,
-    Widget? content,
-    List<Widget> actions = const <Widget>[],
-  }) : super(
-          title: title,
-          content: content,
-          actions: actions,
-        );
+  const BasicDialogAlertData({
+    super.title,
+    super.content,
+    super.actions,
+    super.icon,
+  });
 }
 
+/// An alert dialog that renders as an [AlertDialog] on Material platforms and
+/// a [CupertinoAlertDialog] on Cupertino platforms.
 class BasicDialogAlert extends BaseDialog<AlertDialog, CupertinoAlertDialog> {
-  BasicDialogAlert({
+  const BasicDialogAlert({
+    super.key,
+    super.style,
     this.title,
     this.content,
     this.actions,
+    this.icon,
     this.android,
     this.ios,
   });
 
-  /// Represents appropriate [Widget] to display in title section.
+  /// The widget shown in the title section, usually a [Text].
   final Widget? title;
 
-  /// Represents appropriate [Widget] to display in content section.
+  /// The widget shown in the content section, usually a [Text].
   final Widget? content;
 
-  /// Represents appropriate list of [Widget]'s to display in actions section.
+  /// The actions shown at the bottom, usually [BasicDialogAction]s.
   final List<Widget>? actions;
 
-  /// Additional configuration on top of [BasicDialogAlertData]'s default configuration.
+  /// An optional widget shown above the title, usually an [Icon].
+  ///
+  /// Material uses [AlertDialog.icon]. Cupertino places it above the title.
+  final Widget? icon;
+
+  /// Overrides used only when rendering the Material version.
+  ///
+  /// This follows the resolved [style], not the device. It's used whenever the
+  /// dialog renders as Material, even on iOS with a forced style.
   final BaseDialogBuilder<BasicDialogAlertData>? android;
 
-  /// Additional configuration on top of [BasicDialogAlertData]'s default configuration.
+  /// Overrides used only when rendering the Cupertino version.
+  ///
+  /// This follows the resolved [style], not the device. It's used whenever the
+  /// dialog renders as Cupertino, even on Android with a forced style.
   final BaseDialogBuilder<BasicDialogAlertData>? ios;
 
   @override
   AlertDialog buildMaterialWidget(BuildContext context) {
-    BasicDialogAlertData? data;
-
-    if (android != null) {
-      data = android?.call(context);
-    }
+    final data = android?.call(context);
 
     return AlertDialog(
+      icon: data?.icon ?? icon,
       title: data?.title ?? title,
       content: data?.content ?? content,
       actions: data?.actions ?? actions,
@@ -60,16 +75,28 @@ class BasicDialogAlert extends BaseDialog<AlertDialog, CupertinoAlertDialog> {
 
   @override
   CupertinoAlertDialog buildCupertinoWidget(BuildContext context) {
-    BasicDialogAlertData? data;
-
-    if (ios != null) {
-      data = ios?.call(context);
-    }
+    final data = ios?.call(context);
+    final resolvedIcon = data?.icon ?? icon;
+    final resolvedTitle = data?.title ?? title;
 
     return CupertinoAlertDialog(
-      title: data?.title ?? title,
+      title: resolvedIcon == null
+          ? resolvedTitle
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconTheme.merge(
+                  data: const IconThemeData(size: 28),
+                  child: resolvedIcon,
+                ),
+                if (resolvedTitle != null) ...[
+                  const SizedBox(height: 8),
+                  resolvedTitle,
+                ],
+              ],
+            ),
       content: data?.content ?? content,
-      actions: data?.actions ?? actions ?? [],
+      actions: data?.actions ?? actions ?? const <Widget>[],
     );
   }
 }
